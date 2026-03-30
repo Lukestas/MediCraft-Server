@@ -1,0 +1,29 @@
+{
+  "name": "healthnote-server",
+  "version": "1.0.0",
+  "description": "Backend of a Medical Appointment Management System, Project for the Software Engineering 2 course",
+  "main": "app.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node ./dist/app.js",
+    "dev": "tsx watch src/app.ts"
+  },
+  "keywords": [],
+  "author": "Lukestas & Osvaldo Zuñiga Perez",
+  "license": "ISC",
+  "packageManager": "pnpm@10.30.3",
+  "devDependencies": {
+    "@types/express": "5.0.6",
+    "@types/morgan": "1.9.10",
+    "@types/node": "25.5.0",
+    "tsx": "4.21.0",
+    "typescript": "6.0.2"
+  },
+  "dependencies": {
+    "cors": "^2.8.6",
+    "express": "5.2.1",
+    "mongoose": "9.3.3",
+    "morgan": "1.10.1"
+  }
+}
