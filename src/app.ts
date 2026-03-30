@@ -1,8 +1,8 @@
 import { app } from './server/server.js';
 import { PORT } from './config/env.js';
-import { MongoDBConnection } from './config/mongodb.js';
+import { startDBConnection } from './config/mongodb.js';
 
-MongoDBConnection();
+startDBConnection();
 
 app.listen(PORT, () => {
   console.log(`Server running in http://localhost:${PORT}`);
