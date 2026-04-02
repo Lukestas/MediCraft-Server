@@ -1,3 +1,5 @@
+type UserRole = 'patient' | 'doctor' | 'admin';
+
 export interface IUser {
   id?: string;
   email: string;
@@ -6,5 +8,5 @@ export interface IUser {
   lastName?: string;
   birthdate: Date;
   DNI: string;
-  role: 'patient' | 'doctor' | 'admin';
+  role: UserRole;
 }
