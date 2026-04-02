@@ -1,8 +1,10 @@
+type AppointmentStatus = 'scheduled' | 'cancelled' | 'completed';
+
 export interface IAppointment {
-  id: string;
-  patient: string;
-  doctor: string;
-  date: string;
-  description: string;
-  status: 'pending' | 'cancelled' | 'active' | 'late';
+  id?: string;
+  patientId: string;
+  doctorId: string;
+  date: Date;
+  description?: string;
+  status: AppointmentStatus;
 }
