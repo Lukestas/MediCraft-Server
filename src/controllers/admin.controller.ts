@@ -6,7 +6,7 @@ import { UserFactory } from '../factories/user/user.factory.js';
 let adminList: IUser[] = [];
 
 export class AdminController {
-  static async getId(req: Request, res: Response) {
+  static async getById(req: Request, res: Response) {
     const adminInformation: IUser | undefined = adminList.find(
       (admin) => admin.id == req.params['id'],
     );
