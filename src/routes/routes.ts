@@ -3,6 +3,7 @@ import { userRoutes } from './user.routes.js';
 import { patientRoutes } from './patient.routes.js';
 import { doctorRoutes } from './doctor.routes.js';
 import { appointmentRoutes } from './appointment.routes.js';
+import { adminRoutes } from './admin.routes.js';
 
 export const routes: Router = Router();
 
@@ -14,3 +15,4 @@ routes.use('/users', userRoutes);
 routes.use('/patients', patientRoutes);
 routes.use('/doctors', doctorRoutes);
 routes.use('/appointments', appointmentRoutes);
+routes.use('/admins', adminRoutes);
