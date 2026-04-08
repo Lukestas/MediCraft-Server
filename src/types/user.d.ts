@@ -8,5 +8,6 @@ export interface IUser {
   lastName?: string;
   birthdate: Date;
   DNI: string;
-  role: UserRole;
+  role?: UserRole;
+  medicalHistory?: string[];
 }
