@@ -112,7 +112,7 @@ export class AdminController {
     };
 
     const adminFactory: IUser = UserFactory.createUser('admin', data);
-    const newAdminList = adminList.filter((admin) => {
+    const newAdminList = adminList.map((admin) => {
       if (admin.id != adminFactory.id) {
         return admin;
       }
