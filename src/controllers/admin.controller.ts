@@ -59,9 +59,13 @@ export class AdminController {
     if (!AdminInformation) {
       return res.status(404).json({ message: 'Admin not found' });
     }
-    const newAdminList = adminList.filter(
-      (admin) => admin.id != AdminInformation.id,
-    );
+    const newAdminList = adminList.map((admin) => {
+      if (admin.id != req.params['id']) {
+        return admin;
+      }
+      AdminInformation = { ...admin, status: false };
+      return AdminInformation;
+    });
 
     adminList = newAdminList;
     return res.status(201).json({ delete: AdminInformation });
