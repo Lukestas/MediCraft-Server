@@ -41,6 +41,8 @@ export class AdminController {
       lastName: adminInformation.lastName ?? '',
       birthdate: new Date(adminInformation.birthdate),
       DNI: adminInformation.DNI,
+      medicalHistory: [],
+      status: true,
     };
     const adminFactory: IUser = UserFactory.createUser('admin', data);
     adminList.push(adminFactory);
@@ -102,6 +104,7 @@ export class AdminController {
       DNI: adminInformation.DNI ?? adminFound!.DNI,
       medicalHistory:
         adminInformation.medicalHistory ?? adminFound!.medicalHistory ?? [],
+      status: true,
     };
 
     const adminFactory: IUser = UserFactory.createUser('admin', data);
