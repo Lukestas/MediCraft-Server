@@ -7,6 +7,9 @@ let adminList: IUser[] = [];
 
 export class AdminController {
   static async getById(req: Request, res: Response) {
+    if (!adminList) {
+      return res.status(404).json({ message: 'Admins not found' });
+    }
     const adminInformation: IUser | undefined = adminList.find(
       (admin) => admin.id == req.params['id'],
     );
@@ -18,6 +21,9 @@ export class AdminController {
 
   static async create(req: Request, res: Response) {
     const adminInformation: Omit<IUser, 'id' | 'role'> = req.body;
+    if (!adminInformation) {
+      return res.status(400).json({ message: 'Missing body' });
+    }
     if (
       !adminInformation.DNI ||
       !adminInformation.birthdate ||
@@ -42,7 +48,10 @@ export class AdminController {
     return res.status(201).json({ user: adminFactory });
   }
   static async delete(req: Request, res: Response) {
-    const AdminInformation: IUser | undefined = adminList.find(
+    if (!adminList) {
+      return res.status(404).json({ message: 'Admins not found' });
+    }
+    let AdminInformation: IUser | undefined = adminList.find(
       (admin) => admin.id == req.params['id'],
     );
     if (!AdminInformation) {
@@ -56,7 +65,13 @@ export class AdminController {
     return res.status(201).json({ delete: AdminInformation });
   }
   static async update(req: Request, res: Response) {
-    const adminInformation: Omit<IUser, 'role'> = req.body;
+    if (!adminList) {
+      return res.status(404).json({ message: 'Admins not found' });
+    }
+    const adminInformation: Omit<IUser, 'role' | 'id'> = req.body;
+    if (!adminInformation) {
+      res.status(400).json({ message: 'Missing body' });
+    }
     if (
       !adminInformation.DNI ||
       !adminInformation.birthdate ||
