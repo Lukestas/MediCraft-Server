@@ -94,7 +94,7 @@ export class AdminController {
 
     const adminFound = adminList.find((admin) => admin.id == req.params['id']);
     if (!adminFound) {
-      res.status(404).json({ message: 'Admin not found' });
+      return res.status(404).json({ message: 'Admin not found' });
     }
 
     const data: IUser = {
