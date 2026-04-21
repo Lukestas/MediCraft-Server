@@ -67,7 +67,7 @@ export class AdminController {
     });
 
     adminList = newAdminList;
-    return res.status(201).json({ delete: AdminInformation });
+    return res.status(201).json({ deleted: AdminInformation });
   }
   static async update(req: Request, res: Response) {
     if (!adminList) {
