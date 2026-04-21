@@ -10,4 +10,5 @@ export interface IUser {
   DNI: string;
   role?: UserRole;
   medicalHistory?: string[];
+  status: boolean;
 }
