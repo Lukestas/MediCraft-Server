@@ -44,10 +44,9 @@ export class AdminController {
       medicalHistory: [],
       status: true,
     };
-    const adminFactory: IUser = UserFactory.createUser('admin', data);
-    adminList.push(adminFactory);
-    console.log(adminList);
-    return res.status(201).json({ user: adminFactory });
+    const newAdmin: IUser = UserFactory.createUser('admin', data);
+    adminList.push(newAdmin);
+    return res.status(201).json({ user: newAdmin });
   }
   static async delete(req: Request, res: Response) {
     if (!adminList) {
