@@ -11,9 +11,4 @@ export class DermatologyFactory implements IDoctorFactory {
       specialty: 'dermatology',
     };
   }
-  createSpecialty(): { name: string } {
-    return {
-      name: 'dermatology',
-    };
-  }
 }
