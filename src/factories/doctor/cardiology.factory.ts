@@ -11,9 +11,4 @@ export class CardiologyFactory implements IDoctorFactory {
       specialty: 'cardiology',
     };
   }
-  createSpecialty(): { name: string } {
-    return {
-      name: 'cardiology',
-    };
-  }
 }
