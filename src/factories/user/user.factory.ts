@@ -12,8 +12,6 @@ export class UserFactory {
     switch (type) {
       case 'patient':
         return baseUser;
-      case 'doctor':
-        return baseUser;
       case 'admin':
         return baseUser;
       default:
