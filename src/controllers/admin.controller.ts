@@ -52,6 +52,9 @@ export class AdminController {
     if (!adminList) {
       return res.status(404).json({ message: 'Admins not found' });
     }
+    if (!req.params['id']) {
+      return res.status(400).json({ message: 'Missing identification' });
+    }
     let AdminInformation: IUser | undefined = adminList.find(
       (admin) => admin.id == req.params['id'],
     );
