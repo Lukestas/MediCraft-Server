@@ -9,7 +9,7 @@ export interface IUser {
   firstName: string;
   lastName?: string;
   birthdate: Date;
-  DNI: string;
+  DNI: number;
   role?: UserRole;
   medicalHistory?: string[];
   status: boolean;
