@@ -1,3 +1,5 @@
+import type { Repository } from './repository.js';
+
 type UserRole = 'patient' | 'doctor' | 'admin';
 
 export interface IUser {
