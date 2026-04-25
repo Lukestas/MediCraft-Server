@@ -3,10 +3,7 @@ import type { IUser } from '../../types/user.js';
 type CreateUserData = Omit<IUser, 'role' | 'id'>;
 
 export class UserFactory {
-  static createUser(
-    type: 'patient' | 'doctor' | 'admin',
-    data: CreateUserData,
-  ): IUser {
+  static createUser(type: 'patient' | 'admin', data: CreateUserData): IUser {
     const baseUser: IUser = {
       ...data,
       role: type,
