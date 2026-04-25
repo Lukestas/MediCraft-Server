@@ -14,3 +14,22 @@ export interface IUser {
   medicalHistory?: string[];
   status: boolean;
 }
+
+export interface IDoctor extends IUser {
+  specialty: string;
+}
+
+export interface IUserRepository extends Repository<IUser | IDoctor> {}
+
+export interface IUserService {
+  createUser(user: IUser | IDoctor): Promise<IUser | IDoctor>;
+  findUser(type: string): Promise<IUser[] | IDoctor[] | null>;
+  findUserById(id: string): Promise<IUser | IDoctor | null>;
+  findDNI(DNI: number): Promise<IUser | IDoctor | null>;
+  findEmail(email: string): Promise<IUser | IDoctor | null>;
+  updateUser(
+    id: string,
+    user: Partial<IUser | IDoctor>,
+  ): Promise<IUser | IDoctor | null>;
+  deleteUser(id: string): Promise<boolean>;
+}
