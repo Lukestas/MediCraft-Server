@@ -33,5 +33,5 @@ export interface IUserService {
     id: string,
     user: Partial<IUser | IDoctor>,
   ): Promise<IUser | IDoctor | null>;
-  deleteUser(id: string): Promise<boolean>;
+  deleteUser(id: string): Promise<IUser | IDoctor | null>;
 }
