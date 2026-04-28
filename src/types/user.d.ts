@@ -19,7 +19,9 @@ export interface IDoctor extends IUser {
   specialty: string;
 }
 
-export interface IUserRepository extends Repository<IUser | IDoctor> {}
+export interface IUserRepository extends Repository<IUser | IDoctor> {
+  findOne(query: Query): Promise<IUser | IDoctor | null>;
+}
 
 export interface IUserService {
   createUser(user: IUser | IDoctor): Promise<IUser | IDoctor>;
