@@ -1,4 +1,4 @@
-import type { Repository } from './repository.js';
+import type { Query, Repository } from './repository.js';
 
 type UserRole = 'patient' | 'doctor' | 'admin';
 
