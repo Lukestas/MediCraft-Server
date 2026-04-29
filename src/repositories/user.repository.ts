@@ -16,12 +16,8 @@ export class UserRepository implements IUserRepository {
     return await UserModel.findById(id).exec();
   }
 
-  async findDNI(DNI: number): Promise<IUser | IDoctor | null> {
-    return await UserModel.findOne({ DNI: DNI }).exec();
-  }
-
-  async findEmail(email: string): Promise<IUser | IDoctor | null> {
-    return await UserModel.findOne({ email: email }).exec();
+  async findOne(query: Query): Promise<IUser | IDoctor | null> {
+    return await UserModel.findOne(query);
   }
 
   async update(
