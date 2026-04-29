@@ -3,7 +3,10 @@ import type { IUser } from '../../types/user.js';
 type CreateUserData = Omit<IUser, 'role' | 'id'>;
 
 export class UserFactory {
-  static createUser(type: 'patient' | 'admin', data: CreateUserData): IUser {
+  static createUser(
+    type: 'patient' | 'admin',
+    data: CreateUserData,
+  ): IUser | null {
     const baseUser: IUser = {
       ...data,
       role: type,
@@ -15,7 +18,7 @@ export class UserFactory {
       case 'admin':
         return baseUser;
       default:
-        throw new Error('Invalid user type');
+        return null;
     }
   }
 }
