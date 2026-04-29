@@ -5,7 +5,5 @@ export interface Repository<T = unknown> {
   find(type: string): Promise<T[] | null>;
   findById(id: string): Promise<T | null>;
   update(id: string, data: Partial<T>): Promise<T | null>;
-  delete(id: string): Promise<boolean>;
-  findDNI(DNI: number): Promise<T | null>;
-  findEmail(email: string): Promise<T | null>;
+  delete(id: string): Promise<T | null>;
 }
