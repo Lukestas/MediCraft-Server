@@ -15,80 +15,33 @@ const userService: IUserService = new UserService(userRepository);
 
 export class UserController {
   static async create(req: Request, res: Response) {
-    const userType = req.body.type;
-    if (!userType) {
-      return res.status(400).json({ message: 'Missing user type field' });
-    }
-    const {
-      DNI,
-      birthdate,
-      email,
-      firstName,
-      password,
-    }: {
-      DNI: number;
-      birthdate: string;
-      email: string;
-      firstName: string;
-      password: string;
-    } = req.body;
-    if (!req.body) {
-      return res.status(400).json({ message: 'Missing body' });
-    }
-    if (!DNI) {
-      return res.status(400).json({ message: 'Missing DNI field' });
-    }
-    const DNIFound = await userService.findDNI(DNI);
-    if (DNIFound) {
-      return res.status(400).json({ message: 'DNI already exists' });
-    }
-    if (!birthdate) {
-      return res.status(400).json({ message: 'Missing birthdate field' });
-    }
-    if (!email) {
-      return res.status(400).json({ message: 'Missing email field' });
-    }
-    const emailFound = await userService.findEmail(email);
-    if (emailFound) {
-      return res.status(400).json({ message: 'Email already exists' });
-    }
-    if (!firstName) {
-      return res.status(400).json({ message: 'Missing first name field' });
-    }
-    if (!password) {
-      return res.status(400).json({ message: 'Missing password field' });
-    }
-    let newUser: Omit<IUser | IDoctor, 'id' | 'role'> = {
-      DNI,
-      birthdate: new Date(birthdate),
-      email,
-      firstName,
-      password,
-      lastName: (req.body.lastName as string) ?? 'NaN',
-      status: true,
-    };
+    const { userType, user, specialty } = req.body;
+
+    let newUser: IUser | IDoctor | null;
+
     if (userType === 'doctor') {
-      const doctorSpecialty: string = req.body.specialty;
-      if (!doctorSpecialty) {
-        return res.status(400).json({ message: 'Missing specialty field' });
-      }
-      const doctorFactory = DoctorFactory.getFactory(doctorSpecialty);
+      const doctorFactory = DoctorFactory.getFactory(specialty);
+
       if (!doctorFactory) {
         return res.status(400).json({ message: 'Incorrect doctor specialty' });
       }
-      newUser = doctorFactory.createDoctor(newUser);
+
+      newUser = doctorFactory.createDoctor(user);
     } else if (userType === 'patient' || userType === 'admin') {
-      newUser = UserFactory.createUser(userType, newUser);
+      newUser = UserFactory.createUser(userType, user);
     } else {
       return res.status(400).json({ message: 'Incorrect user type' });
     }
+    if (!newUser) {
+      return res.status(400).json({ message: 'Error adding a new doctor' });
+    }
     const userSaved = await userService.createUser(newUser);
+
     return res.status(201).json({ newUser: userSaved });
   }
 
   static async getAll(req: Request, res: Response) {
     const userType: 'patient' | 'doctor' = req.body.type;
-    console.log(req.body.type);
     if (!userType) {
       return res.status(400).json({ message: 'Missing user type field' });
     }
@@ -99,6 +52,39 @@ export class UserController {
     if (!users) {
       return res.status(404).json({ message: 'Users not found' });
     }
-    return res.status(200).json({ users });
+    return res.status(201).json({ users });
+  }
+
+  static async getById(req: Request, res: Response) {
+    const id = req.params['id'] as string;
+    if (!id) {
+      return res.status(400).json({ message: 'Missing identification' });
+    }
+    const user = await userService.findUserById(id);
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+    return res.status(200).json({ user });
+  }
+
+  static async update(req: Request, res: Response) {
+    const { id, user } = req.body;
+    const updateUser = await userService.updateUser(id, user);
+    if (!updateUser) {
+      return res.status(404).json({ message: 'User not found or not updated' });
+    }
+    return res.status(200).json({ updateUser });
+  }
+
+  static async delete(req: Request, res: Response) {
+    const id = req.params['id'] as string;
+    if (!id) {
+      return res.status(400).json({ message: 'Missing identification' });
+    }
+    const softDeleteUser = await userService.deleteUser(id);
+    if (!softDeleteUser) {
+      return res.status(404).json({ message: 'User not found or not updated' });
+    }
+    return res.status(200).json({ softDeleteUser });
   }
 }
