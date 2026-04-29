@@ -24,11 +24,11 @@ export class UserService implements IUserService {
   }
 
   async findDNI(DNI: number): Promise<IUser | IDoctor | null> {
-    return this.userRepository.findDNI(DNI);
+    return this.userRepository.findOne({ DNI });
   }
 
   async findEmail(email: string): Promise<IUser | IDoctor | null> {
-    return this.userRepository.findEmail(email);
+    return this.userRepository.findOne({ email });
   }
 
   async updateUser(
