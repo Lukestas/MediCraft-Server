@@ -1,124 +1,78 @@
 import type { Request, Response } from 'express';
 import type { IAppointment } from '../types/appointment.js';
-import { randomUUID } from 'crypto';
-let appointmentList: IAppointment[] = [];
+import { AppointmentRepository } from '../repositories/appointment.repository.js';
+import { AppointmentServices } from '../services/appointment.service.js';
+import { UserService } from '../services/user.service.js';
+import { UserRepository } from '../repositories/user.repository.js';
+import type { IUserRepository, IUserService } from '../types/user.js';
+
+const appointmentRepository: AppointmentRepository =
+  new AppointmentRepository();
+const appointmentService = new AppointmentServices(appointmentRepository);
+const userRepository: IUserRepository = new UserRepository();
+const userService: IUserService = new UserService(userRepository);
 export class AppointmentController {
   static async create(req: Request, res: Response) {
-    const appointmentInformation: Omit<IAppointment, 'id'> = req.body;
-    if (!appointmentInformation) {
-      return res.status(400).json({ message: 'Missing body' });
+    const appointment: IAppointment = req.body.appointment;
+    const newAppointment =
+      await appointmentService.createAppointment(appointment);
+    let userFound = await userService.findUserById(appointment.patientId);
+    if (!userFound) {
+      return res.status(404).json({ message: 'User not found' });
     }
-    if (
-      !appointmentInformation.patientId ||
-      !appointmentInformation.description ||
-      !appointmentInformation.doctorId ||
-      !appointmentInformation.date
-    ) {
-      return res.status(400).json({ message: 'Missing required fields' });
+    userFound.medicalHistory?.push(newAppointment.id!);
+    const updateUser = await userService.updateUser(userFound.id!, userFound);
+    if (!updateUser) {
+      return res.status(400).json({ message: 'User not updated' });
     }
-    const newAppointment: IAppointment = {
-      id: randomUUID(),
-      doctorId: appointmentInformation.doctorId,
-      patientId: appointmentInformation.patientId,
-      description: appointmentInformation.description,
-      status: 'scheduled',
-      date: new Date(appointmentInformation.date),
-    };
-    appointmentList.push(newAppointment);
-    return res.status(200).json({ appointment: newAppointment });
+    return res.status(201).json({ newAppointment });
   }
+
+  static async getAll(req: Request, res: Response) {
+    let limit = req.body.limit as string;
+    if (!limit) {
+      limit = '0001-01-01';
+    }
+    const appointment = await appointmentService.findAppointment(limit);
+    if (!appointment) {
+      return res.status(404).json({ message: 'Appointments not found' });
+    }
+    return res.status(200).json({ appointment });
+  }
+
   static async getById(req: Request, res: Response) {
-    if (!appointmentList) {
-      return res.status(400).json({ message: 'Appointmets not found' });
-    }
-    if (!req.params['id']) {
+    const id = req.params['id'] as string;
+    if (!id) {
       return res.status(400).json({ message: 'Missing identification' });
     }
-    const appointmentFound = appointmentList.find(
-      (appointment) => appointment.id == req.params['id'],
-    );
-    if (!appointmentFound) {
+    const appointment = await appointmentService.findAppointmentById(id);
+    if (!appointment) {
       return res.status(404).json({ message: 'Appointment not found' });
     }
-    return res.status(201).json({ appointment: appointmentFound });
+    return res.status(200).json({ appointment });
   }
-  static async getAll(_req: Request, res: Response) {
-    if (!appointmentList) {
-      return res.status(400).json({ message: 'Appointments not found' });
-    }
-    return res.status(201).json({ appointments: appointmentList });
-  }
-  static async delete(req: Request, res: Response) {
-    if (!appointmentList) {
-      return res.status(400).json({ message: 'Appointments not found' });
-    }
-    if (!req.params['id']) {
-      return res.status(400).json({ message: 'Missing identification' });
-    }
-    let appointmentInformation = appointmentList.find(
-      (appointment) => appointment.id == req.params['id'],
-    );
-    if (!appointmentInformation) {
-      return res.status(404).json({ message: 'Doctor not found' });
-    }
-    const newAppointmentList: IAppointment[] = appointmentList.map(
-      (appointment) => {
-        if (appointment.id != req.params['id']) {
-          return appointment;
-        }
-        appointmentInformation = { ...appointment, status: 'cancelled' };
-        return appointmentInformation;
-      },
-    );
-    appointmentList = newAppointmentList;
-    return res.status(200).json({ deleted: appointmentInformation });
-  }
+
   static async update(req: Request, res: Response) {
-    if (!appointmentList) {
-      return res.status(400).json({ message: 'Appointment not found' });
+    const { id, appointment } = req.body;
+    const updateAppointment = await appointmentService.updateAppointment(
+      id,
+      appointment,
+    );
+    if (!updateAppointment) {
+      return res.status(404).json({ message: 'Appointment not updated' });
     }
-    const appointmentInformation: Omit<IAppointment, 'id' | 'patientId'> =
-      req.body;
-    if (!appointmentInformation) {
-      return res.status(400).json({ message: 'Missing body' });
-    }
-    if (
-      !appointmentInformation.date ||
-      !appointmentInformation.description ||
-      !appointmentInformation.doctorId ||
-      !appointmentInformation.status
-    ) {
-      return res
-        .status(400)
-        .json({ message: 'All fields required or missing required fields' });
-    }
-    if (!req.params['id']) {
+    return res.status(200).json({ updateAppointment });
+  }
+
+  static async delete(req: Request, res: Response) {
+    const id = req.params['id'] as string;
+    if (!id) {
       return res.status(400).json({ message: 'Missing identification' });
     }
-    const appointmentFound = appointmentList.find(
-      (appointment) => appointment.id == req.params['id'],
-    );
-    if (!appointmentFound) {
+    const appointment = await appointmentService.deleteAppointment(id);
+    if (!appointment) {
       return res.status(404).json({ message: 'Appointment not found' });
     }
-    const data: IAppointment = {
-      id: req.params['id'] as string,
-      doctorId: appointmentInformation.doctorId ?? appointmentFound.doctorId,
-      patientId: appointmentFound.patientId,
-      status: 'scheduled',
-      description:
-        appointmentInformation.description ?? appointmentFound.description,
-      date: new Date(appointmentInformation.date) ?? appointmentFound.date,
-    };
-    const newAppointmentList: IAppointment[] = appointmentList.map(
-      (appointment) => {
-        if (appointment.id != data.id) {
-          return appointment;
-        }
-        return data;
-      },
-    );
-    appointmentList = newAppointmentList;
-    return res.status(201).json({ appointment: data });
+    return res.status(200).json({ appointment });
   }
 }
