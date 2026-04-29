@@ -1,4 +1,5 @@
 import { UserModel } from '../models/user.model.js';
+import type { Query } from '../types/repository.js';
 
 import type { IUser, IDoctor, IUserRepository } from '../types/user.js';
 
@@ -29,8 +30,15 @@ export class UserRepository implements IUserRepository {
     }).exec();
   }
 
-  async delete(id: string): Promise<boolean> {
-    const deleted = await UserModel.findByIdAndDelete(id).exec();
-    return deleted !== null;
+  async delete(id: string): Promise<IUser | IDoctor | null> {
+    let user: IUser | IDoctor | null = await UserModel.findById(id).exec();
+    if (!user) {
+      return null;
+    }
+    user.status = false;
+    const softDeleteUser = await UserModel.findByIdAndUpdate(id, user, {
+      returnDocument: 'after',
+    }).exec();
+    return softDeleteUser;
   }
 }
