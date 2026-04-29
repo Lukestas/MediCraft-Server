@@ -37,7 +37,7 @@ export class UserService implements IUserService {
   ): Promise<IUser | IDoctor | null> {
     return this.userRepository.update(id, user);
   }
-  async deleteUser(id: string): Promise<boolean> {
+  async deleteUser(id: string): Promise<IUser | IDoctor | null> {
     return this.userRepository.delete(id);
   }
 }
