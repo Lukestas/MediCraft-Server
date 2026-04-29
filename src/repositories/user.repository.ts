@@ -24,7 +24,9 @@ export class UserRepository implements IUserRepository {
     id: string,
     data: IUser | IDoctor,
   ): Promise<IUser | IDoctor | null> {
-    return await UserModel.findByIdAndUpdate(id, data, { new: true }).exec();
+    return await UserModel.findByIdAndUpdate(id, data, {
+      returnDocument: 'after',
+    }).exec();
   }
 
   async delete(id: string): Promise<boolean> {
